@@ -77,6 +77,10 @@ ErrCode Enclosure::Init(MAC_t &mac, uint8_t mac_index) {
 
 
 ErrCode Enclosure::SetLightBar(uint8_t brightness) {
+
+  if(!IsOnline())
+    return E_FAILURE;
+
   CanStdFuncCmd_t cmd;
   uint8_t         buffer[4];
 
