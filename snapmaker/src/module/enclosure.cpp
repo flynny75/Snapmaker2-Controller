@@ -77,6 +77,10 @@ ErrCode Enclosure::Init(MAC_t &mac, uint8_t mac_index) {
 
 
 ErrCode Enclosure::SetLightBar(uint8_t brightness) {
+
+  if(!IsOnline())
+    return E_FAILURE;
+
   CanStdFuncCmd_t cmd;
   uint8_t         buffer[4];
 
@@ -145,23 +149,25 @@ void Enclosure::PollDoorState() {
 
 
 void Enclosure::Disable() {
-  LOG_I("disable door checking!\n");
   enabled_ = false;
   if (event_state_ == ENCLOSURE_EVENT_STATE_HANDLED_OPEN &&
       event_state_ == ENCLOSURE_EVENT_STATE_OPENED) {
     HandleDoorClosed();
     event_state_ = ENCLOSURE_EVENT_STATE_IDLE;
   }
+
+  LOG_I("Door detection disabled\n");
 }
 
 
 void Enclosure::Enable() {
-  LOG_I("enable door checking!\n");
-  enabled_ = true;
+  enabled_= true;
   if (door_state_ == ENCLOSURE_DOOR_STATE_OPEN &&
       event_state_ == ENCLOSURE_EVENT_STATE_IDLE) {
     HandleDoorOpened();
   }
+
+  LOG_I("Door detection enabled\n");
 }
 
 

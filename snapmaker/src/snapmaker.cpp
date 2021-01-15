@@ -24,6 +24,7 @@
 #include "hmi/event_handler.h"
 #include "module/can_host.h"
 #include "module/linear.h"
+#include "module/enclosure.h"
 #include "service/system.h"
 #include "service/upgrade.h"
 #include "service/power_loss_recovery.h"
@@ -144,6 +145,8 @@ static void main_loop(void *param) {
 
   // waiting for initializing modules
   xEventGroupWaitBits(((SnapmakerHandle_t)param)->event_group, EVENT_GROUP_MODULE_READY, pdFALSE, pdTRUE, pdMS_TO_TICKS(10000));
+
+  enclosure.SetLightBar(255);
 
   // init power-loss recovery after initializing modules
   // because we need to check if current toolhead is same with previous
