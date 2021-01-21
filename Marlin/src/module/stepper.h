@@ -230,6 +230,10 @@ class Stepper {
 
   public:
 
+    #if ENABLED(DEBUG_ISR_LATENCY)
+      static uint16_t pre_isr_ticks;
+    #endif
+
     #if HAS_EXTRA_ENDSTOPS || ENABLED(Z_STEPPER_AUTO_ALIGN)
       static bool separate_multi_axis;
     #endif
@@ -345,17 +349,17 @@ class Stepper {
     // Interrupt Service Routines
 
     // The ISR scheduler
-    static void isr() AT_SNAP_SECTION;
+    static void isr();
 
     // The stepper pulse phase ISR
-    static void stepper_pulse_phase_isr() AT_SNAP_SECTION;
+    static void stepper_pulse_phase_isr();
 
     // The stepper block processing phase ISR
-    static uint32_t stepper_block_phase_isr() AT_SNAP_SECTION;
+    static uint32_t stepper_block_phase_isr();
 
     #if ENABLED(LIN_ADVANCE)
       // The Linear advance stepper ISR
-      static uint32_t advance_isr() AT_SNAP_SECTION;
+      static uint32_t advance_isr();
     #endif
 
     // Check if the given block is busy or not - Must not be called from ISR contexts
@@ -392,7 +396,7 @@ class Stepper {
     }
 
     // Handle a triggered endstop
-    static void endstop_triggered(const AxisEnum axis) AT_SNAP_SECTION;
+    static void endstop_triggered(const AxisEnum axis);
 
     // Triggered position of an axis in steps
     static int32_t triggered_position(const AxisEnum axis);
@@ -463,12 +467,12 @@ class Stepper {
     }
 
     // Set direction bits for all steppers
-    static void set_directions() AT_SNAP_SECTION;
+    static void set_directions();
 
   private:
 
     // Set the current position in steps
-    static void _set_position(const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &e) AT_SNAP_SECTION;
+    static void _set_position(const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &e);
 
     FORCE_INLINE static uint32_t calc_timer_interval(uint32_t step_rate, uint8_t scale, uint8_t* loops) {
       uint32_t timer;
@@ -480,7 +484,7 @@ class Stepper {
       #if DISABLED(DISABLE_MULTI_STEPPING)
 
         // The stepping frequency limits for each multistepping rate
-        static const uint32_t limit[] PROGMEM = {
+        static uint32_t limit[] = {
           (  MAX_STEP_ISR_FREQUENCY_1X     ),
           (  MAX_STEP_ISR_FREQUENCY_2X >> 1),
           (  MAX_STEP_ISR_FREQUENCY_4X >> 2),
